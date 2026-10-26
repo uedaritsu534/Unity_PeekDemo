@@ -20,7 +20,12 @@ Unity strips the `Standard` shader from, so everything renders magenta. Add `Sta
 With no tracker running, the **keyboard simulator** stands in for your head:
 arrow keys = lean left/right/up/down, Page Up/Down = lean toward/away from the screen.
 
-## Head tracking with a webcam (OpenTrack)
+## Head tracking on macOS (or anywhere without OpenTrack)
+
+Run the Python tracker in `HeadTracker/` at the repo root. It sends the same UDP packets as OpenTrack.
+See `HeadTracker/README.md`.
+
+## Head tracking with a webcam (OpenTrack, Windows)
 
 1. Install [OpenTrack](https://github.com/opentrack/opentrack/releases).
 2. **Input:** `neuralnet tracker` (webcam face tracking, no markers needed). AITrack → OpenTrack also works.
