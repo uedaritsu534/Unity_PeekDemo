@@ -17,12 +17,15 @@ Usage:
 import argparse
 import math
 import socket
+import ssl
 import struct
 import sys
 import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
+import certifi
 import cv2
 import mediapipe as mp
 from mediapipe.tasks import python as mp_tasks
@@ -78,7 +81,17 @@ def ensure_model():
     if MODEL_PATH.exists():
         return
     print(f"Downloading face model to {MODEL_PATH.name} ...")
-    urllib.request.urlretrieve(MODEL_URL, MODEL_PATH)
+    # python.org builds on macOS ship without CA certificates; certifi's bundle avoids
+    # "certificate verify failed" without needing Install Certificates.command.
+    context = ssl.create_default_context(cafile=certifi.where())
+    try:
+        with urllib.request.urlopen(MODEL_URL, context=context) as response:
+            data = response.read()
+    except urllib.error.URLError as e:
+        sys.exit(f"Could not download the face model ({e.reason}).\n"
+                 f"Download it manually into this folder instead:\n"
+                 f"  curl -L -o {MODEL_PATH.name} {MODEL_URL}")
+    MODEL_PATH.write_bytes(data)
 
 
 def parse_args():
